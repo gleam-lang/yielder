@@ -1609,6 +1609,9 @@ pub fn each(over yielder: Yielder(a), with f: fn(a) -> b) -> Nil {
 /// This function is for use with `use` expressions, to replicate the behaviour
 /// of the `yield` keyword found in other languages.
 ///
+/// If you only need to prepend an element and don't require the `use` syntax,
+/// use `prepend`.
+///
 /// ## Examples
 ///
 /// ```gleam
@@ -1625,4 +1628,20 @@ pub fn each(over yielder: Yielder(a), with f: fn(a) -> b) -> Nil {
 ///
 pub fn yield(element: a, next: fn() -> Yielder(a)) -> Yielder(a) {
   Yielder(fn() { Continue(element, fn() { next().continuation() }) })
+}
+
+/// Add a new element to the start of an yielder.
+///
+/// ## Examples
+///
+/// ```gleam
+/// let yielder = from_list([1, 2, 3]) |> prepend(0)
+///
+/// yielder.to_list
+/// // -> [0, 1, 2, 3]
+/// ```
+///
+pub fn prepend(yielder: Yielder(a), element: a) -> Yielder(a) {
+  use <- yield(element)
+  yielder
 }

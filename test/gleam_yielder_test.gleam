@@ -735,3 +735,10 @@ pub fn yield_computes_only_necessary_values_test() {
   |> yielder.to_list
   |> should.equal([1, 2, 3])
 }
+
+pub fn prepend_test() {
+  yielder.from_list([1, 2, 3])
+  |> yielder.prepend(0)
+  |> yielder.to_list
+  |> should.equal([0, 1, 2, 3])
+}
