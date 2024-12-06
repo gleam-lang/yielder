@@ -4,7 +4,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/order
 
-// Internal private representation of an Yielder
+// Internal private representation of a yielder
 type Action(element) {
   // Dedicated to Electric Six
   // https://youtu.be/_30t2dzEgiw?t=162
@@ -12,14 +12,14 @@ type Action(element) {
   Continue(element, fn() -> Action(element))
 }
 
-/// An yielder is a lazily evaluated sequence of element.
+/// A yielder is a lazily evaluated sequence of elements.
 ///
 /// Yielders are useful when working with collections that are too large to
 /// fit in memory (or those that are infinite in size) as they only require the
 /// elements currently being processed to be in memory.
 ///
-/// As a lazy data structure no work is done when an yielder is filtered,
-/// mapped, etc, instead a new yielder is returned with these transformations
+/// As a lazy data structure no work is done when a yielder is filtered,
+/// mapped, etc. Instead, a new yielder is returned with these transformations
 /// applied to the stream. Once the stream has all the required transformations
 /// applied it can be evaluated using functions such as `fold` and `to_list`.
 ///
@@ -38,7 +38,7 @@ fn stop() -> Action(element) {
   Stop
 }
 
-/// Creates an yielder from a given function and accumulator.
+/// Creates a yielder from a given function and accumulator.
 ///
 /// The function is called on the accumulator and returns either `Done`,
 /// indicating the yielder has no more elements, or `Next` which contains a
@@ -81,7 +81,7 @@ fn unfold_loop(
   }
 }
 
-/// Creates an yielder that yields values created by calling a given function
+/// Creates a yielder that yields values created by calling a given function
 /// repeatedly.
 ///
 /// ```gleam
@@ -95,7 +95,7 @@ pub fn repeatedly(f: fn() -> element) -> Yielder(element) {
   unfold(Nil, fn(_) { Next(f(), Nil) })
 }
 
-/// Creates an yielder that returns the same value infinitely.
+/// Creates a yielder that returns the same value infinitely.
 ///
 /// ## Examples
 ///
@@ -110,7 +110,7 @@ pub fn repeat(x: element) -> Yielder(element) {
   repeatedly(fn() { x })
 }
 
-/// Creates an yielder that yields each element from the given list.
+/// Creates a yielder that yields each element from the given list.
 ///
 /// ## Examples
 ///
@@ -149,7 +149,7 @@ fn transform_loop(
   }
 }
 
-/// Creates an yielder from an existing yielder
+/// Creates a yielder from an existing yielder
 /// and a stateful function that may short-circuit.
 ///
 /// `f` takes arguments `acc` for current state and `el` for current element from underlying yielder,
@@ -175,10 +175,10 @@ pub fn transform(
   |> Yielder
 }
 
-/// Reduces an yielder of elements into a single value by calling a given
+/// Reduces a yielder of elements into a single value by calling a given
 /// function on each element in turn.
 ///
-/// If called on an yielder of infinite length then this function will never
+/// If called on a yielder of infinite length then this function will never
 /// return.
 ///
 /// If you do not care about the end value and only wish to evaluate the
@@ -221,9 +221,9 @@ pub fn run(yielder: Yielder(e)) -> Nil {
   fold(yielder, Nil, fn(_, _) { Nil })
 }
 
-/// Evaluates an yielder and returns all the elements as a list.
+/// Evaluates a yielder and returns all the elements as a list.
 ///
-/// If called on an yielder of infinite length then this function will never
+/// If called on a yielder of infinite length then this function will never
 /// return.
 ///
 /// ## Examples
@@ -241,7 +241,7 @@ pub fn to_list(yielder: Yielder(element)) -> List(element) {
   |> list.reverse
 }
 
-/// Eagerly accesses the first value of an yielder, returning a `Next`
+/// Eagerly accesses the first value of a yielder, returning a `Next`
 /// that contains the first value and the rest of the yielder.
 ///
 /// If called on an empty yielder, `Done` is returned.
@@ -270,7 +270,7 @@ pub fn step(yielder: Yielder(e)) -> Step(e, Yielder(e)) {
   }
 }
 
-/// Creates an yielder that only yields the first `desired` elements.
+/// Creates a yielder that only yields the first `desired` elements.
 ///
 /// If the yielder does not have enough elements all of them are yielded.
 ///
@@ -309,7 +309,7 @@ fn take_loop(continuation: fn() -> Action(e), desired: Int) -> fn() -> Action(e)
   }
 }
 
-/// Evaluates and discards the first N elements in an yielder, returning a new
+/// Evaluates and discards the first N elements in a yielder, returning a new
 /// yielder.
 ///
 /// If the yielder does not have enough elements an empty yielder is
@@ -350,7 +350,7 @@ fn drop_loop(continuation: fn() -> Action(e), desired: Int) -> Action(e) {
   }
 }
 
-/// Creates an yielder from an existing yielder and a transformation function.
+/// Creates a yielder from an existing yielder and a transformation function.
 ///
 /// Each element in the new yielder will be the result of calling the given
 /// function on the elements in the given yielder.
@@ -384,7 +384,7 @@ fn map_loop(continuation: fn() -> Action(a), f: fn(a) -> b) -> fn() -> Action(b)
 
 /// Combines two yielders into a single one using the given function.
 ///
-/// If an yielder is longer than the other the extra elements are dropped.
+/// If a yielder is longer than the other the extra elements are dropped.
 ///
 /// This function does not evaluate the elements of the two yielders, the
 /// computation is performed when the resulting yielder is later run.
@@ -458,7 +458,7 @@ fn append_loop(first: fn() -> Action(a), second: fn() -> Action(a)) -> Action(a)
   }
 }
 
-/// Flattens an yielder of yielders, creating a new yielder.
+/// Flattens a yielder of yielders, creating a new yielder.
 ///
 /// This function does not evaluate the elements of the yielder, the
 /// computation is performed when the yielder is later run.
@@ -505,7 +505,7 @@ pub fn concat(yielders: List(Yielder(a))) -> Yielder(a) {
   flatten(from_list(yielders))
 }
 
-/// Creates an yielder from an existing yielder and a transformation function.
+/// Creates a yielder from an existing yielder and a transformation function.
 ///
 /// Each element in the new yielder will be the result of calling the given
 /// function on the elements in the given yielder and then flattening the
@@ -532,7 +532,7 @@ pub fn flat_map(
   |> flatten
 }
 
-/// Creates an yielder from an existing yielder and a predicate function.
+/// Creates a yielder from an existing yielder and a predicate function.
 ///
 /// The new yielder will contain elements from the first yielder for which
 /// the given function returns `True`.
@@ -573,7 +573,7 @@ fn filter_loop(
   }
 }
 
-/// Creates an yielder from an existing yielder and a transforming predicate function.
+/// Creates a yielder from an existing yielder and a transforming predicate function.
 ///
 /// The new yielder will contain elements from the first yielder for which
 /// the given function returns `Ok`, transformed to the value inside the `Ok`.
@@ -617,7 +617,7 @@ fn filter_map_loop(
   }
 }
 
-/// Creates an yielder that repeats a given yielder infinitely.
+/// Creates a yielder that repeats a given yielder infinitely.
 ///
 /// ## Examples
 ///
@@ -634,7 +634,7 @@ pub fn cycle(yielder: Yielder(a)) -> Yielder(a) {
   |> flatten
 }
 
-/// Creates an yielder of ints, starting at a given start int and stepping by
+/// Creates a yielder of ints, starting at a given start int and stepping by
 /// one to a given end int.
 ///
 /// ## Examples
@@ -765,7 +765,7 @@ fn find_map_loop(
   }
 }
 
-/// Wraps values yielded from an yielder with indices, starting from 0.
+/// Wraps values yielded from a yielder with indices, starting from 0.
 ///
 /// ## Examples
 ///
@@ -793,7 +793,7 @@ fn index_loop(
   }
 }
 
-/// Creates an yielder that infinitely applies a function to a value.
+/// Creates a yielder that infinitely applies a function to a value.
 ///
 /// ## Examples
 ///
@@ -809,7 +809,7 @@ pub fn iterate(
   unfold(initial, fn(element) { Next(element, f(element)) })
 }
 
-/// Creates an yielder that yields elements while the predicate returns `True`.
+/// Creates a yielder that yields elements while the predicate returns `True`.
 ///
 /// ## Examples
 ///
@@ -845,7 +845,7 @@ fn take_while_loop(
   }
 }
 
-/// Creates an yielder that drops elements while the predicate returns `True`,
+/// Creates a yielder that drops elements while the predicate returns `True`,
 /// and then yields the remaining elements.
 ///
 /// ## Examples
@@ -879,7 +879,7 @@ fn drop_while_loop(
   }
 }
 
-/// Creates an yielder from an existing yielder and a stateful function.
+/// Creates a yielder from an existing yielder and a stateful function.
 ///
 /// Specifically, this behaves like `fold`, but yields intermediate results.
 ///
@@ -959,7 +959,7 @@ type Chunk(element, key) {
   LastBy(List(element))
 }
 
-/// Creates an yielder that emits chunks of elements
+/// Creates a yielder that emits chunks of elements
 /// for which `f` returns the same value.
 ///
 /// ## Examples
@@ -1015,7 +1015,7 @@ fn next_chunk(
   }
 }
 
-/// Creates an yielder that emits chunks of given size.
+/// Creates a yielder that emits chunks of given size.
 ///
 /// If the last chunk does not have `count` elements, it is yielded
 /// as a partial chunk, with less than `count` elements.
@@ -1089,7 +1089,7 @@ fn next_sized_chunk(
   }
 }
 
-/// Creates an yielder that yields the given `elem` element
+/// Creates a yielder that yields the given `elem` element
 /// between elements emitted by the underlying yielder.
 ///
 /// ## Examples
@@ -1332,7 +1332,7 @@ pub fn last(yielder: Yielder(element)) -> Result(element, Nil) {
   |> reduce(fn(_, elem) { elem })
 }
 
-/// Creates an yielder that yields no elements.
+/// Creates a yielder that yields no elements.
 ///
 /// ## Examples
 ///
@@ -1345,7 +1345,7 @@ pub fn empty() -> Yielder(element) {
   Yielder(stop)
 }
 
-/// Creates an yielder that yields exactly one element provided by calling the given function.
+/// Creates a yielder that yields exactly one element provided by calling the given function.
 ///
 /// ## Examples
 ///
@@ -1359,7 +1359,7 @@ pub fn once(f: fn() -> element) -> Yielder(element) {
   |> Yielder
 }
 
-/// Creates an yielder that yields the given element exactly once.
+/// Creates a yielder that yields the given element exactly once.
 ///
 /// ## Examples
 ///
@@ -1372,7 +1372,7 @@ pub fn single(elem: element) -> Yielder(element) {
   once(fn() { elem })
 }
 
-/// Creates an yielder that alternates between the two given yielders
+/// Creates a yielder that alternates between the two given yielders
 /// until both have run out.
 ///
 /// ## Examples
@@ -1410,11 +1410,11 @@ fn interleave_loop(
   }
 }
 
-/// Like `fold`, `fold_until` reduces an yielder of elements into a single value by calling a given
+/// Like `fold`, `fold_until` reduces a yielder of elements into a single value by calling a given
 /// function on each element in turn, but uses `list.ContinueOrStop` to determine
 /// whether or not to keep iterating.
 ///
-/// If called on an yielder of infinite length then this function will only ever
+/// If called on a yielder of infinite length then this function will only ever
 /// return if the function returns `list.Stop`.
 ///
 /// ## Examples
@@ -1581,7 +1581,7 @@ fn length_loop(over continuation: fn() -> Action(e), with length: Int) -> Int {
   }
 }
 
-/// Traverse an yielder, calling a function on each element.
+/// Traverse a yielder, calling a function on each element.
 ///
 /// ## Examples
 ///
@@ -1604,7 +1604,7 @@ pub fn each(over yielder: Yielder(a), with f: fn(a) -> b) -> Nil {
   |> run
 }
 
-/// Add a new element to the start of an yielder.
+/// Add a new element to the start of a yielder.
 ///
 /// This function is for use with `use` expressions, to replicate the behaviour
 /// of the `yield` keyword found in other languages.
@@ -1630,7 +1630,7 @@ pub fn yield(element: a, next: fn() -> Yielder(a)) -> Yielder(a) {
   Yielder(fn() { Continue(element, fn() { next().continuation() }) })
 }
 
-/// Add a new element to the start of an yielder.
+/// Add a new element to the start of a yielder.
 ///
 /// ## Examples
 ///
