@@ -1,5 +1,7 @@
 # Changelog
 
+- Deprecated `yielder.concat` function. Use `yielder.flatten` instead.
+
 ## v1.1.0 - 2024-11-29
 
 - Added `yielder.prepend` function.
