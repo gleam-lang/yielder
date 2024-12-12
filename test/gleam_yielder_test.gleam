@@ -742,3 +742,10 @@ pub fn prepend_test() {
   |> yielder.to_list
   |> should.equal([0, 1, 2, 3])
 }
+
+pub fn push_front_test() {
+  yielder.from_list([1, 2, 3])
+  |> yielder.push_front(0)
+  |> yielder.to_list
+  |> should.equal([0, 1, 2, 3])
+}

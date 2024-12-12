@@ -1,5 +1,7 @@
 # Changelog
 
+- Deprecated `yielder.prepend` function. Use `yielder.push_front` instead.
+
 ## v1.1.0 - 2024-11-29
 
 - Added `yielder.prepend` function.
