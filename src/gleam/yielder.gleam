@@ -501,6 +501,7 @@ fn flatten_loop(flattened: fn() -> Action(Yielder(a))) -> Action(a) {
 /// // -> [1, 2, 3, 4]
 /// ```
 ///
+@deprecated("Use `yielder.flatten` instead.")
 pub fn concat(yielders: List(Yielder(a))) -> Yielder(a) {
   flatten(from_list(yielders))
 }
